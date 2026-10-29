@@ -3,183 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>MFA Physical Token Simulator</title>
-
+    <meta name="theme-color" content="#f8f9fc">
+    <title>MFA Token Simulator</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+        :root {
+            --ink: #172747;
+            --blue: #477cf4;
+            --mint: #20b58b;
+            --muted: #78859e;
+            --line: #e5eaf3;
         }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f2f4f8;
+            margin: 0; min-height: 100vh; padding: 30px 16px;
+            display: grid; place-items: center;
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(ellipse at 4% 4%, rgba(190,216,255,.62), transparent 32%),
+                radial-gradient(ellipse at 96% 94%, rgba(188,244,220,.6), transparent 30%),
+                #f8f9fc;
         }
-
-        .container {
-            width: 420px;
-            background: white;
-            padding: 30px;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            text-align: center;
+        button, input { font: inherit; }
+        .shell { width: min(100%, 720px); }
+        .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 4px 22px; }
+        .brand { display:flex; align-items:center; gap:12px; min-width:0; }
+        .brand-mark {
+            display:grid; place-items:center; width:46px; height:46px; flex-shrink:0;
+            border-radius:15px; background:#e8f0ff; color:var(--blue); font-size:25px;
         }
-
-        h1 {
-            margin-bottom: 5px;
+        .brand-name { font-weight:800; letter-spacing:-.7px; font-size:clamp(16px,3vw,20px); }
+        .brand-name span { color:var(--blue); }
+        .brand-caption { margin-top:4px; color:var(--muted); font-size:12px; }
+        .demo-pill { display:flex; align-items:center; gap:7px; padding:9px 12px; border-radius:30px; background:#e5f8f0; color:#168565; font-size:12px; font-weight:750; white-space:nowrap; }
+        .demo-dot { width:7px; height:7px; border-radius:50%; background:var(--mint); }
+        .card { padding:clamp(20px,5vw,36px); border:1px solid rgba(225,232,244,.95); border-radius:27px; background:rgba(255,255,255,.91); box-shadow:0 24px 70px rgba(37,61,103,.09); }
+        .intro { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-bottom:26px; }
+        .eyebrow { color:var(--blue); font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+        h1 { margin:9px 0 8px; font-size:clamp(27px,5vw,35px); line-height:1.12; letter-spacing:-1.5px; }
+        .description { max-width:430px; margin:0; color:var(--muted); font-size:14px; line-height:1.75; }
+        .hero-art { display:grid; place-items:center; flex-shrink:0; width:92px; height:92px; border-radius:29px; background:linear-gradient(145deg,#e6efff,#e9faf2); font-size:43px; transform:rotate(3deg); }
+        .token { padding:21px 22px; border:1px solid #d7e5ff; border-radius:20px; background:linear-gradient(115deg,#f0f6ff,#f8fbff); }
+        .token-label { display:flex; justify-content:space-between; gap:12px; color:#687997; font-size:12px; font-weight:750; }
+        .token-state { color:#169b77; font-variant-numeric:tabular-nums; }
+        .token-row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:13px; }
+        .otp { color:var(--ink); font-size:clamp(30px,7vw,43px); font-weight:800; letter-spacing:clamp(4px,1.7vw,10px); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+        .copy { flex-shrink:0; border:1px solid #dce6f7; border-radius:10px; padding:9px 11px; color:var(--blue); background:white; font-size:12px; font-weight:750; cursor:pointer; }
+        .field-label { display:block; margin:22px 0 9px; font-size:13px; font-weight:750; }
+        .otp-input { width:100%; height:54px; padding:0 16px; outline:none; border:1px solid #dfe6f1; border-radius:13px; color:var(--ink); background:#fff; font-size:17px; letter-spacing:5px; transition:box-shadow .2s,border-color .2s; }
+        .otp-input:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(71,124,244,.11); }
+        .otp-input::placeholder { color:#a1adbf; font-size:14px; letter-spacing:1px; }
+        .actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+        .action { min-height:51px; padding:12px 14px; border:0; border-radius:13px; color:white; font-size:14px; font-weight:800; cursor:pointer; transition:transform .18s,filter .18s; }
+        .action:hover { transform:translateY(-2px); filter:brightness(1.03); }
+        .generate { background:linear-gradient(110deg,#548df8,#3972e9); box-shadow:0 8px 18px rgba(57,114,233,.18); }
+        .verify { background:linear-gradient(110deg,#43c99d,#18aa86); box-shadow:0 8px 18px rgba(24,170,134,.16); }
+        .status { display:flex; align-items:flex-start; gap:12px; min-height:66px; margin-top:19px; padding:14px 16px; border:1px solid #e5eaf3; border-radius:15px; background:#f8faff; }
+        .status-icon { display:grid; place-items:center; width:30px; height:30px; flex-shrink:0; border-radius:10px; color:var(--blue); background:#e8f0ff; font-weight:900; }
+        .status-title { margin:2px 0 4px; font-size:13px; font-weight:800; }
+        .status-detail { color:var(--muted); font-size:12px; line-height:1.5; overflow-wrap:anywhere; }
+        .status.success { border-color:#d4f1e5; background:#effaf5; }
+        .status.success .status-icon { color:#168565; background:#d8f5e8; }
+        .status.error { border-color:#f5dcd9; background:#fff5f3; }
+        .status.error .status-icon { color:#c74d45; background:#ffe5e1; }
+        .features { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:25px; padding-top:23px; border-top:1px solid #edf0f6; }
+        .feature { text-align:center; }
+        .feature-icon { display:grid; place-items:center; width:40px; height:40px; margin:0 auto 9px; border-radius:14px; color:var(--blue); background:#eaf1ff; font-size:19px; }
+        .feature:nth-child(2) .feature-icon { color:#169b77; background:#e4f8ef; }
+        .feature:nth-child(3) .feature-icon { color:#c88a24; background:#fff3df; }
+        .feature-title { font-size:12px; font-weight:800; }
+        .feature-detail { margin-top:5px; color:var(--muted); font-size:11px; line-height:1.5; }
+        footer { padding-top:18px; text-align:center; color:#8b96a9; font-size:11px; }
+        @media(max-width:520px) {
+            body { padding:20px 12px; }
+            .topbar { margin-bottom:17px; }
+            .brand-mark { width:40px; height:40px; border-radius:13px; }
+            .brand-caption { font-size:10px; }
+            .demo-pill { padding:8px 9px; font-size:10px; }
+            .hero-art { width:62px; height:62px; border-radius:20px; font-size:31px; }
+            .intro { gap:10px; }
+            .token { padding:17px 14px; }
+            .copy { padding:8px; }
+            .actions { grid-template-columns:1fr; }
         }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 25px;
-        }
-
-        .token-display {
-            background: #111827;
-            color: #00ff88;
-            padding: 22px;
-            border-radius: 12px;
-            font-size: 36px;
-            font-weight: bold;
-            letter-spacing: 8px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 15px;
-        }
-
-        #message {
-            font-weight: bold;
-            min-height: 24px;
-        }
-
-        .architecture {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #555;
-            font-size: 13px;
-        }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
     </style>
 </head>
-
 <body>
+<main class="shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">⬡</div>
+            <div>
+                <div class="brand-name"><span>MFA</span> Token Simulator</div>
+                <div class="brand-caption">Secure access · One-time password</div>
+            </div>
+        </div>
+        <div class="demo-pill"><span class="demo-dot"></span> Live demo</div>
+    </header>
 
-<div class="container">
+    <section class="card">
+        <div class="intro">
+            <div>
+                <div class="eyebrow">Authentication</div>
+                <h1>Your security token</h1>
+                <p class="description">Generate a one-time password and verify your identity through cloud-based validation.</p>
+            </div>
+            <div class="hero-art" aria-hidden="true">🛡️</div>
+        </div>
 
-    <h1>🔐 MFA Token</h1>
+        <section class="token" aria-label="OTP display">
+            <div class="token-label"><span>Your OTP</span><span class="token-state" id="timer">Ready when you are</span></div>
+            <div class="token-row">
+                <div class="otp" id="otpDisplay">••••••</div>
+                <button class="copy" id="copyBtn" type="button" onclick="copyOTP()" disabled>Copy code</button>
+            </div>
+        </section>
 
-    <div class="subtitle">
-        Physical Token Simulator
-    </div>
+        <button class="action generate" id="generateBtn" type="button" onclick="generateOTP()" style="width:100%;margin-top:16px">↻ &nbsp; Generate OTP</button>
 
-    <div class="token-display" id="otpDisplay">
-        ------
-    </div>
+        <label class="field-label" for="otpInput">Enter verification code</label>
+        <input class="otp-input" type="text" id="otpInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit OTP">
 
-    <button onclick="generateOTP()">
-        Generate OTP
-    </button>
+        <div class="actions">
+            <button class="action verify" id="verifyBtn" type="button" onclick="verifyOTP()">✓ &nbsp; Verify OTP</button>
+            <button class="action" type="button" onclick="clearInput()" style="color:#667692;background:#f0f3f9">Clear input</button>
+        </div>
 
-    <input
-        type="text"
-        id="otpInput"
-        maxlength="6"
-        placeholder="Enter OTP"
-    >
+        <div class="status" id="statusBox" role="status" aria-live="polite">
+            <div class="status-icon" id="statusIcon">i</div>
+            <div>
+                <div class="status-title" id="statusTitle">Ready to begin</div>
+                <div class="status-detail" id="message">Generate an OTP to start the verification process.</div>
+            </div>
+        </div>
 
-    <button onclick="verifyOTP()">
-        Verify OTP
-    </button>
-
-    <div id="message"></div>
-
-</div>
+        <div class="features">
+            <div class="feature"><div class="feature-icon">◇</div><div class="feature-title">Authentication</div><div class="feature-detail">Identity verification</div></div>
+            <div class="feature"><div class="feature-icon">◷</div><div class="feature-title">Time-based</div><div class="feature-detail">60-second validity</div></div>
+            <div class="feature"><div class="feature-icon">☁</div><div class="feature-title">Cloud validation</div><div class="feature-detail">AWS Lambda</div></div>
+        </div>
+    </section>
+    <footer>MFA Token Simulator · Academic demonstration</footer>
+</main>
 
 <script>
-
 let currentOTP = null;
 let otpExpiry = null;
+let countdownInterval = null;
 
-async function generateOTP() {
+function setStatus(type, title, message) {
+    const box = document.getElementById("statusBox");
+    box.className = "status" + (type ? " " + type : "");
+    document.getElementById("statusIcon").textContent =
+        type === "success" ? "✓" : type === "error" ? "!" : "i";
+    document.getElementById("statusTitle").textContent = title;
+    document.getElementById("message").textContent = message;
+}
 
-    const response = await fetch("/generate", {
-        method: "POST"
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-
-        // Store the generated OTP
-        currentOTP = data.otp;
-
-        // OTP is valid for 60 seconds
-        otpExpiry = Math.floor(Date.now() / 1000) + 60;
-
-        document.getElementById("otpDisplay").textContent = data.otp;
-
-        document.getElementById("message").textContent =
-            "OTP generated. Valid for 60 seconds.";
+function updateCountdown() {
+    const remaining = Math.max(0, otpExpiry - Math.floor(Date.now() / 1000));
+    document.getElementById("timer").textContent = remaining > 0 ? remaining + "s remaining" : "Expired";
+    if (remaining <= 0) {
+        clearInterval(countdownInterval);
+        currentOTP = null;
+        document.getElementById("otpDisplay").textContent = "••••••";
+        document.getElementById("copyBtn").disabled = true;
+        document.getElementById("verifyBtn").disabled = true;
+        setStatus("error", "OTP expired", "Generate a new OTP to continue.");
     }
 }
 
+async function generateOTP() {
+    const button = document.getElementById("generateBtn");
+    button.disabled = true;
+    try {
+        const response = await fetch("/generate", { method: "POST" });
+        if (!response.ok) throw new Error("OTP generation request failed.");
+        const data = await response.json();
+        if (!data.success || data.otp == null) throw new Error(data.message || "Could not generate an OTP.");
+
+        currentOTP = String(data.otp);
+        otpExpiry = Math.floor(Date.now() / 1000) + 60;
+        document.getElementById("otpDisplay").textContent = currentOTP;
+        document.getElementById("otpInput").value = "";
+        document.getElementById("copyBtn").disabled = false;
+        document.getElementById("verifyBtn").disabled = false;
+        clearInterval(countdownInterval);
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+        setStatus("success", "OTP generated successfully", "Your code is valid for 60 seconds.");
+    } catch (error) {
+        console.error(error);
+        setStatus("error", "Generation failed", "Could not generate an OTP. Please try again.");
+    } finally {
+        button.disabled = false;
+    }
+}
+
+async function copyOTP() {
+    if (!currentOTP || Date.now() / 1000 >= otpExpiry) {
+        setStatus("error", "OTP unavailable", "Generate a new OTP before copying.");
+        return;
+    }
+    try {
+        await navigator.clipboard.writeText(currentOTP);
+        setStatus("success", "OTP copied", "Your code has been copied to the clipboard.");
+    } catch (error) {
+        setStatus("", "Copy unavailable", "Please select and copy the displayed code manually.");
+    }
+}
+
+function clearInput() {
+    document.getElementById("otpInput").value = "";
+    document.getElementById("otpInput").focus();
+}
 
 async function verifyOTP() {
-
-    const enteredOTP =
-        document.getElementById("otpInput").value;
+    const enteredOTP = document.getElementById("otpInput").value.trim();
+    const button = document.getElementById("verifyBtn");
 
     if (!currentOTP) {
-        document.getElementById("message").textContent =
-            "Please generate an OTP first.";
+        setStatus("error", "No active OTP", "Generate a new OTP before verifying.");
+        return;
+    }
+    if (Date.now() / 1000 >= otpExpiry) {
+        updateCountdown();
+        return;
+    }
+    if (!/^\d{6}$/.test(enteredOTP)) {
+        setStatus("error", "Invalid input", "Enter all six digits of your OTP.");
         return;
     }
 
-    if (!enteredOTP) {
-        document.getElementById("message").textContent =
-            "Please enter the OTP.";
-        return;
-    }
-
+    button.disabled = true;
     try {
-
         const response = await fetch(
             "https://em6o4xfku2ft2b5cwu3p47ougq0ddgqn.lambda-url.us-east-1.on.aws/",
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     generated_otp: currentOTP,
                     entered_otp: enteredOTP,
@@ -187,22 +250,34 @@ async function verifyOTP() {
                 })
             }
         );
-
+        if (!response.ok) throw new Error("AWS verification request failed.");
         const data = await response.json();
 
-        document.getElementById("message").textContent =
-            data.message;
+        setStatus(data.success ? "success" : "error",
+            data.success ? "Verification successful" : "Verification failed",
+            data.message || (data.success ? "OTP verified successfully." : "The OTP was not accepted."));
 
+        if (data.success) {
+            currentOTP = null;
+            clearInterval(countdownInterval);
+            document.getElementById("otpDisplay").textContent = "••••••";
+            document.getElementById("timer").textContent = "Complete";
+            document.getElementById("copyBtn").disabled = true;
+        }
     } catch (error) {
-
         console.error(error);
-
-        document.getElementById("message").textContent =
-            "Error connecting to AWS Lambda.";
+        setStatus("error", "Connection problem", "Unable to reach AWS verification. Please try again.");
+    } finally {
+        button.disabled = !currentOTP;
     }
 }
 
+document.getElementById("otpInput").addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, "").slice(0, 6);
+});
+document.getElementById("otpInput").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") verifyOTP();
+});
 </script>
-
 </body>
 </html>
