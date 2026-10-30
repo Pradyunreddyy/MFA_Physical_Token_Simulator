@@ -26,13 +26,11 @@
         }
         button, input { font: inherit; }
         .shell { width: min(100%, 720px); }
-        .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 4px 22px; }
+        .topbar { display:flex; align-items:center; justify-content:flex-start; gap:16px; margin:0 4px 22px; padding:0 14px; }
         .brand { display:flex; align-items:center; gap:12px; min-width:0; }
         .brand-name { font-weight:800; letter-spacing:-.7px; font-size:clamp(16px,3vw,20px); }
         .brand-name span { color:var(--blue); }
         .brand-caption { margin-top:4px; color:var(--muted); font-size:12px; }
-        .demo-pill { display:flex; align-items:center; gap:7px; padding:9px 12px; border-radius:30px; background:#e5f8f0; color:#168565; font-size:12px; font-weight:750; white-space:nowrap; }
-        .demo-dot { width:7px; height:7px; border-radius:50%; background:var(--mint); }
         .card { padding:clamp(20px,5vw,36px); border:1px solid rgba(225,232,244,.95); border-radius:27px; background:rgba(255,255,255,.91); box-shadow:0 24px 70px rgba(37,61,103,.09); }
         .intro { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-bottom:26px; }
         .eyebrow { color:var(--blue); font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
@@ -79,9 +77,8 @@
         footer { padding-top:18px; text-align:center; color:#8b96a9; font-size:11px; }
         @media(max-width:520px) {
             body { padding:20px 12px; }
-            .topbar { margin-bottom:17px; }
+            .topbar { margin:0 4px 17px; padding:0 10px; }
             .brand-caption { font-size:10px; }
-            .demo-pill { padding:8px 9px; font-size:10px; }
             .hero-art { width:62px; height:62px; }
             .hero-art svg { width:34px; height:39px; }
             .intro { gap:10px; }
@@ -101,7 +98,6 @@
                 <div class="brand-caption">Secure access · One-time password</div>
             </div>
         </div>
-        <div class="demo-pill"><span class="demo-dot"></span> Live demo</div>
     </header>
 
     <section class="card">
