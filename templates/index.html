@@ -28,10 +28,6 @@
         .shell { width: min(100%, 720px); }
         .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 4px 22px; }
         .brand { display:flex; align-items:center; gap:12px; min-width:0; }
-        .brand-mark {
-            display:grid; place-items:center; width:46px; height:46px; flex-shrink:0;
-            border-radius:15px; background:#e8f0ff; color:var(--blue); font-size:25px;
-        }
         .brand-name { font-weight:800; letter-spacing:-.7px; font-size:clamp(16px,3vw,20px); }
         .brand-name span { color:var(--blue); }
         .brand-caption { margin-top:4px; color:var(--muted); font-size:12px; }
@@ -84,7 +80,6 @@
         @media(max-width:520px) {
             body { padding:20px 12px; }
             .topbar { margin-bottom:17px; }
-            .brand-mark { width:40px; height:40px; border-radius:13px; }
             .brand-caption { font-size:10px; }
             .demo-pill { padding:8px 9px; font-size:10px; }
             .hero-art { width:62px; height:62px; }
@@ -101,7 +96,6 @@
 <main class="shell">
     <header class="topbar">
         <div class="brand">
-            <div class="brand-mark" aria-hidden="true">⬡</div>
             <div>
                 <div class="brand-name"><span>MFA</span> Token Simulator</div>
                 <div class="brand-caption">Secure access · One-time password</div>
@@ -158,7 +152,6 @@
             <div class="feature"><div class="feature-icon">☁</div><div class="feature-title">Cloud validation</div><div class="feature-detail">AWS Lambda</div></div>
         </div>
     </section>
-    <footer>MFA Token Simulator · Academic demonstration</footer>
 </main>
 
 <script>
